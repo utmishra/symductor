@@ -12,8 +12,14 @@ _Conductor of a symphony. Ensures the right notes at the right time_
     - [ ] HackerEarth
     - [ ] Kindle or Google books
     - [ ] ClickUp
+    - [ ] Google Maps
+    - [ ] Health metrics via Mi Fitness or Android or MiWatch OS?
+    - [ ] UBS
 - [ ] Define Personal KPIs
     - Development (Commits, Pushes, PRs)
     - Learning (Via HackerEarth)
     - Book reading progress
+    - Exercise
+    - Food
+    - Finance
 - [ ] Setup KPI dashboard
