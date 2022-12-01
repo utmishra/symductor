@@ -10,6 +10,7 @@ _Conductor of a symphony. Ensures the right notes at the right time_
     - [ ] RescueTime
     - [ ] Github
     - [ ] HackerEarth
+    - [ ] Clean Code linting tool?
     - [ ] Kindle or Google books
     - [ ] ClickUp
     - [ ] Google Maps
@@ -22,4 +23,5 @@ _Conductor of a symphony. Ensures the right notes at the right time_
     - Exercise
     - Food
     - Finance
+    - Clean Code
 - [ ] Setup KPI dashboard
