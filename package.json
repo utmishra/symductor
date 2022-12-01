@@ -1,0 +1,28 @@
+{
+  "name": "symductor",
+  "version": "0.0.1",
+  "description": "Symductor to orchestrate and display all symphonies",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/utmishra/symductor.git"
+  },
+  "keywords": [
+    "dashboard",
+    "automation",
+    "nodejs",
+    "n8n"
+  ],
+  "author": "Utkarsh Mishra",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/utmishra/symductor/issues"
+  },
+  "homepage": "https://github.com/utmishra/symductor#readme",
+  "dependencies": {
+    "n8n": "^0.204.0"
+  }
+}
