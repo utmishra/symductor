@@ -2,10 +2,7 @@
   "name": "symductor",
   "version": "0.0.1",
   "description": "Symductor to orchestrate and display all symphonies",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "main": "app.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/utmishra/symductor.git"
@@ -22,7 +19,17 @@
     "url": "https://github.com/utmishra/symductor/issues"
   },
   "homepage": "https://github.com/utmishra/symductor#readme",
+  "private": true,
+  "scripts": {
+    "start": "nodemon --exec 'ts-node -r tsconfig-paths/register src/index'"
+  },
   "dependencies": {
-    "n8n": "^0.204.0"
+    "n8n": "^0.204.0",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "http-errors": "~1.6.3",
+    "jade": "~1.11.0",
+    "morgan": "~1.9.1"
   }
 }
