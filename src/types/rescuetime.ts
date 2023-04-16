@@ -59,3 +59,9 @@ export type RescueTimeDailySummaryFeed = {
   shopping_duration_formatted: string;
   utilities_duration_formatted: string;
 };
+
+export type RescueTimeApiResponse = {
+  status: number;
+  data?: RescueTimeDailySummaryFeed[];
+  error?: string;
+};

@@ -1,39 +1,30 @@
-import { RescueTimeDailySummaryFeed } from '@/types/rescuetime';
+import { RescueTimeApiResponse } from '@/types/rescuetime';
 import axios from 'axios';
-import dotenv from 'dotenv';
-dotenv.config();
 
-const RESCUETIME_API_PATH = 'https://www.rescuetime.com/anapi/data';
+const RESCUETIME_API_PATH = 'https://www.rescuetime.com/anapi';
 
 export const rescueTimeService = {
-  dailySummaryFeed: async (): Promise<RescueTimeDailySummaryFeed> => {
+  dailySummaryFeed: async (): Promise<RescueTimeApiResponse> => {
     if (!process.env.RESCUETIME_API_KEY) {
       throw new Error('No RescueTime API key provided');
     }
-    const rescueTimeApi = axios.create({
-      baseURL: RESCUETIME_API_PATH,
+
+    const dailySummary = await axios.get(`${RESCUETIME_API_PATH}/daily_summary_feed`, {
       params: {
         key: process.env.RESCUETIME_API_KEY,
         format: 'json',
       },
     });
-
-    const dailySummary = await rescueTimeApi
-      .get('/daily_summary_feed', {
-        params: {
-          key: process.env.RESCUETIME_API_KEY,
-          format: 'json',
-        },
-      })
-      .catch((error) => {
-        console.error(error);
-        return { data: false };
-      });
-
-    if (!dailySummary.data) {
-      throw new Error('No data returned from RescueTime');
+    if (dailySummary.status >= 200 && dailySummary.status < 300) {
+      return {
+        status: 200,
+        data: dailySummary.data,
+      };
+    } else {
+      return {
+        status: dailySummary.status,
+        error: 'Something went wrong while fetching RescueTime data',
+      };
     }
-
-    return dailySummary.data;
   },
 };

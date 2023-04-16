@@ -1,8 +1,5 @@
 import { TodoistApi } from '@doist/todoist-api-typescript';
 import { DateTime } from 'ts-luxon';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 export const todoistService = async () => {
   if (!process.env.TODOIST_API_KEY) {
