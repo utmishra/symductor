@@ -1,11 +1,20 @@
 {
   "compilerOptions": {
-    "target": "es2016",
-    "module": "commonjs",
-    "outDir": "./dist",
+    "target": "es6",
+    "module": "es6",
+    "lib": ["es6", "dom"],
+    "jsx": "react",
     "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
+    "outDir": "dist",
     "strict": true,
-    "skipLibCheck": true
-  }
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "baseUrl": ".",
+    "paths": {
+      "*": ["./*"]
+    },
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["./**/*"],
+  "exclude": ["node_modules", "**/*.spec.ts", "dist"]
 }

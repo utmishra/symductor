@@ -1,20 +1,4 @@
-import * as dotenv from 'dotenv'
-import {
-  express
-} from 'express';
-const router = express.router();
-
-import * as Services from '../services/interfaces/service';
-
-/* GET home page. */
-router.get('/', function (req, res, next) {
-  res.render('index', {
-    title: 'Express'
-  });
-});
-
-router.get('/services', (req, res) => {
-
-})
-
-module.exports = router;
+export { default as todoistRoutes } from './todoistRoutes';
+export { default as githubRoutes } from './githubRoutes';
+export { default as rescueTimeRoutes } from './rescueTimeRoutes';
+export { default as googleCalendarRoutes } from './googleCalendarRoutes';

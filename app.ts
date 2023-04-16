@@ -1,30 +1,18 @@
-import createError from 'http-errors';
-import express, { Express, Request, Response } from 'express';
-import * as path from 'path';
-import cookieParser from 'cookie-parser';
-var logger = require('morgan');
+import express from 'express';
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+let app = express();
 
-var app = express();
+import todoistRoutes from './routes/todoistRoutes';
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.use('/api', todoistRoutes);
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+// Start server
+const PORT = process.env.PORT || 5000;
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use(express.static('public'));
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+app.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}`);
 });
 
 module.exports = app;

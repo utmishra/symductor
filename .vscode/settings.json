@@ -1,0 +1,11 @@
+{
+  "javascript.preferences.quoteStyle": "single",
+  "typescript.preferences.quoteStyle": "single",
+  "prettier.jsxSingleQuote": true,
+  "prettier.singleQuote": true,
+  "yaml.format.singleQuote": true,
+  "svelte.plugin.svelte.format.config.singleQuote": true,
+  "prettier.documentSelectors": ["**/*.{ts,js,html,php,json}"],
+  "prettier.configPath": "./.prettierrc",
+  "prettier.prettierPath": ""
+}
