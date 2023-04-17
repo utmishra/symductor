@@ -1,6 +1,11 @@
 import '@/styles/globals.css';
 import type { AppProps } from 'next/app';
 import { createTheme, NextUIProvider } from '@nextui-org/react';
+import React from 'react';
+
+if (typeof window === 'undefined') {
+  React.useLayoutEffect = React.useEffect;
+}
 
 const theme = createTheme({
   type: 'light', // it could be "light" or "dark"

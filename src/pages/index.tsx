@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { Container, Row, Text, Col, Card } from '@nextui-org/react';
-import { RescueTimeProductivityScore } from './components/rescuetime/';
+import { RescueTimeProductivityScore } from './rescuetime/RescueTimeProductivityScore';
 
 export default function Home() {
   return (

@@ -8,7 +8,7 @@ const useFetch = (url: string) => {
       .then((res) => res.json())
       .then((data) => {
         seterror(data.error);
-        setdata(data.joke);
+        setdata(data.data);
         setloading(false);
       });
   }, [url]);
