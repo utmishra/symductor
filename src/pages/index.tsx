@@ -1,6 +1,7 @@
 import Image from 'next/image';
-import { Container, Row, Text, Col, Card } from '@nextui-org/react';
+import { Container, Row, Text, Col, Card, Table, Grid } from '@nextui-org/react';
 import { RescueTimeProductivityScore } from './rescuetime/RescueTimeProductivityScore';
+import { RescueTimeActivities } from './rescuetime/RescueTimeActivities';
 
 export default function Home() {
   return (
@@ -45,6 +46,15 @@ export default function Home() {
               <RescueTimeProductivityScore />
             </Card.Body>
           </Card>
+        </Col>
+      </Row>
+      <Row>
+        <Col span={12}>
+          <Grid.Container gap={2} justify='center'>
+            <Grid xs={12} sm={6} md={4} lg={3}>
+              <RescueTimeActivities />
+            </Grid>
+          </Grid.Container>
         </Col>
       </Row>
     </Container>

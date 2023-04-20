@@ -65,3 +65,15 @@ export type RescueTimeApiResponse = {
   data?: RescueTimeDailySummaryFeed[];
   error?: string;
 };
+
+export type RescueTimeActivity = {
+  notes: string;
+  row_headers: string[];
+  rows: (string | number)[][];
+};
+
+export type RescueTimeActivityResponse = {
+  data: RescueTimeActivity | null;
+  isLoading: boolean;
+  isError: string;
+};
