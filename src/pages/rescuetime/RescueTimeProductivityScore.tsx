@@ -1,9 +1,9 @@
-import { Card, Row, Col, Progress, Tooltip } from '@nextui-org/react';
+import { Card, Row, Col, Progress, Tooltip, Grid, NormalColors } from '@nextui-org/react';
 import { useRescueTimeData } from './hook';
 import { useMemo } from 'react';
 import { RescueTimeDailySummaryFeed } from '@/types/rescuetime';
 
-const getProgressColor = (value: number): 'error' | 'warning' | 'primary' | 'success' => {
+const getProgressColor = (value: number): NormalColors => {
   switch (true) {
     case value < 60:
       return 'error';
@@ -48,6 +48,10 @@ const thisWeekOrLastWeekScore = (data: RescueTimeDailySummaryFeed[]): number => 
   }
 };
 
+const thisMonthScore = (data: RescueTimeDailySummaryFeed[]): number => {
+  return Math.floor(data.reduce((acc, curr) => acc + curr.productivity_pulse, 0) / data.length);
+};
+
 export const RescueTimeProductivityScore = () => {
   const { data, isLoading, isError }: { data: null | RescueTimeDailySummaryFeed[]; isLoading: boolean; isError: string } = useRescueTimeData();
 
@@ -64,35 +68,56 @@ export const RescueTimeProductivityScore = () => {
   }, [data, isLoading, isError]);
 
   return (
-    <Row justify='center' align='center' gap={1}>
-      <Col span={3}>
-        <Card>
-          <Card.Header>Your Productivity Score today: {data !== null && data[0] ? Math.floor(data[0]['productivity_pulse']) : ''}%</Card.Header>
-          <Card.Body>
-            <Row justify='center' align='center'>
-              <Col span={12}>
-                {renderProgressBar(
-                  data !== null && data[0] ? cardType : 'error',
-                  data !== null && data[0] ? data[0]['productivity_pulse'] : null,
-                  isError,
-                )}
-              </Col>
-            </Row>
-          </Card.Body>
-        </Card>
-      </Col>
-      <Col span={3}>
-        <Card>
-          <Card.Header>
-            Your Productivity Score {new Date().getDay() < 4 ? 'this week' : 'last week'}: {data !== null ? thisWeekOrLastWeekScore(data) : ''}%
-          </Card.Header>
-          <Card.Body>
-            <Row justify='center' align='center'>
-              <Col span={12}>{renderProgressBar(cardType, data !== null && data[0] ? thisWeekOrLastWeekScore(data) : null, isError)}</Col>
-            </Row>
-          </Card.Body>
-        </Card>
-      </Col>
-    </Row>
+    <>
+      <Grid.Container gap={1} justify='center'>
+        <Grid md={3}>
+          <Card>
+            <Card.Header>
+              <span style={{ fontSize: '1.3rem' }}>Today: </span>
+              <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>
+                {data !== null && data[0] ? Math.floor(data[0]['productivity_pulse']) : ''}%
+              </span>
+            </Card.Header>
+            <Card.Body>
+              <Row justify='center' align='center'>
+                <Col span={12}>
+                  {renderProgressBar(
+                    data !== null && data[0] ? cardType : 'error',
+                    data !== null && data[0] ? data[0]['productivity_pulse'] : null,
+                    isError,
+                  )}
+                </Col>
+              </Row>
+            </Card.Body>
+          </Card>
+        </Grid>
+        <Grid md={3}>
+          <Card>
+            <Card.Header>
+              <span style={{ fontSize: '1.3rem' }}>{new Date().getDay() < 4 ? 'this week' : 'last week'}</span>:{' '}
+              <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{data !== null ? thisWeekOrLastWeekScore(data) : ''}%</span>
+            </Card.Header>
+            <Card.Body>
+              <Row justify='center' align='center'>
+                <Col span={12}>{renderProgressBar(cardType, data !== null && data[0] ? thisWeekOrLastWeekScore(data) : null, isError)}</Col>
+              </Row>
+            </Card.Body>
+          </Card>
+        </Grid>
+        <Grid md={3}>
+          <Card>
+            <Card.Header>
+              <span style={{ fontSize: '1.3rem' }}>This month: </span>
+              <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{data !== null ? thisMonthScore(data) : ''}%</span>
+            </Card.Header>
+            <Card.Body>
+              <Row justify='center' align='center'>
+                <Col span={12}>{renderProgressBar(cardType, data !== null && data[0] ? thisMonthScore(data) : null, isError)}</Col>
+              </Row>
+            </Card.Body>
+          </Card>
+        </Grid>
+      </Grid.Container>
+    </>
   );
 };

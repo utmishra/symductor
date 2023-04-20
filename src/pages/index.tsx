@@ -22,21 +22,24 @@ export default function Home() {
             }}
           />
         </Col>
-        <Col span={9}>
+        <Col span={6}>
           <Row justify='center' align='center'>
             <Col span={12}>
-              <Text h1 style={{ textAlign: 'left' }}>
+              <Text h1 style={{ textAlign: 'center' }}>
                 Mission Control
               </Text>
             </Col>
           </Row>
         </Col>
+        <Col span={3}></Col>
       </Row>
       <Row justify='center' align='center'>
         <Col span={12}>
           <Card>
             <Card.Header>
-              <Text h3>Productivity Score</Text>
+              <Text h3 style={{ padding: '0.2rem' }}>
+                Productivity Score
+              </Text>
             </Card.Header>
             <Card.Body>
               <RescueTimeProductivityScore />
