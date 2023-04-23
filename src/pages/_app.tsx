@@ -20,17 +20,17 @@ const inconsolata = Inconsolata({ subsets: ['latin'] });
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <ErrorBoundary>
-      <NextUIProvider theme={theme}>
-        <main className={inconsolata.className}>
+    <NextUIProvider theme={theme}>
+      <main className={inconsolata.className}>
+        <ErrorBoundary>
           <Component
             {...pageProps}
             style={{
               background: '#ffe2e2',
             }}
           />
-        </main>
-      </NextUIProvider>
-    </ErrorBoundary>
+        </ErrorBoundary>
+      </main>
+    </NextUIProvider>
   );
 }

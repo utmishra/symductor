@@ -8,42 +8,43 @@ interface ErrorData {
 }
 
 interface ErrorBoundaryProps {
-  children: React.ReactNode | React.ReactNode[]; // Add this line to define the 'children' prop
+  children: React.ReactNode;
 }
 
 interface ErrorBoundaryState {
   hasError: boolean;
   errorData: ErrorData | null;
   loading: boolean;
+  errorReported: boolean;
 }
 
 class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
     super(props);
-    this.state = { hasError: false, errorData: null, loading: false };
+    this.state = { hasError: false, errorData: null, loading: false, errorReported: false };
   }
 
   static getDerivedStateFromError(): ErrorBoundaryState {
-    return { hasError: true, errorData: null, loading: false };
+    return { hasError: true, errorData: null, loading: false, errorReported: false };
   }
 
   async componentDidCatch(error: Error, errorInfo: React.ErrorInfo): Promise<void> {
-    console.log({ error, errorInfo });
+    if (!this.state.errorReported) {
+      this.setState({ loading: true });
 
-    this.setState({ loading: true });
+      try {
+        const response = await fetch('/api/debug-error', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ error, errorInfo }),
+        });
 
-    try {
-      const response = await fetch('/api/debug-error', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ error, errorInfo }),
-      });
-
-      const data: ErrorData = await response.json();
-      this.setState({ errorData: data, loading: false });
-    } catch (apiError) {
-      console.error('Error calling /api/debug-error:', apiError);
-      this.setState({ loading: false });
+        const data: ErrorData = await response.json();
+        this.setState({ errorData: data, loading: false, errorReported: true });
+      } catch (apiError) {
+        console.error('Error calling /api/debug-error:', apiError);
+        this.setState({ loading: false, errorReported: true });
+      }
     }
   }
 

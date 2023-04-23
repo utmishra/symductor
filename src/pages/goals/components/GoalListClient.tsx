@@ -4,7 +4,7 @@ import { Text } from '@nextui-org/react';
 import { addGoal, addSubgoal, updateGoal, updateSubgoal, deleteGoal, deleteSubgoal } from '@/services/goals';
 import Goal from './Goal';
 
-export const GoalListClient: React.FC = () => {
+const GoalListClient: React.FC = () => {
   const { goals, isLoading, error } = useGoals();
 
   if (isLoading) {
@@ -36,3 +36,5 @@ export const GoalListClient: React.FC = () => {
     </div>
   );
 };
+
+export default GoalListClient;
