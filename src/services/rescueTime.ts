@@ -38,7 +38,6 @@ export class RescueTimeService {
     const today = DateTime.local();
     const beginTime = today.startOf('day').toFormat('yyy-LL-dd');
     const endTime = today.minus({ days: 3 }).toFormat('yyyy-LL-dd');
-    console.info(`Requests RescueTime current activities with param: ${beginTime} - ${endTime}`);
     const activities = await axios.get(`${RESCUETIME_API_PATH}/data`, {
       params: {
         key: this.apiKey,
@@ -48,7 +47,6 @@ export class RescueTimeService {
         restrict_end: endTime,
       },
     });
-    console.log(activities);
     if (activities.status >= 200 && activities.status < 300) {
       return activities.data;
     } else {

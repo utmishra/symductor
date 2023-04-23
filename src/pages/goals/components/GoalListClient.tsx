@@ -20,11 +20,11 @@ export const GoalListClient: React.FC = () => {
       {goals.map((goal) => (
         <Goal
           key={goal.id}
-          id={''}
-          name={''}
-          description={''}
-          archived={false}
-          subgoals={[]}
+          id={goal.id}
+          name={goal.name}
+          description={goal.description}
+          archived={goal.archived}
+          subgoals={goal.subgoals}
           updateGoal={updateGoal}
           updateSubgoal={updateSubgoal}
           addSubgoal={addSubgoal}

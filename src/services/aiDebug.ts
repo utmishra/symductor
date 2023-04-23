@@ -9,20 +9,23 @@ export interface ErrorInformation {
   error: Error | string;
 }
 
-export async function sendErrorToChatGPT(errorInfo: ErrorInformation): Promise<void> {
-  console.error(errorInfo.error);
+export type ChatGPTResponse = { errorMessageSummary: string; reason: string; possibleSolution: string };
+
+export async function sendErrorToChatGPT(type: 'server' | 'client', errorInfo: ErrorInformation): Promise<undefined | ChatGPTResponse> {
+  console.error(errorInfo);
 
   const { fileName, error } = errorInfo;
 
   // Get the git diff of the file
-  const gitDiff = execSync(`git diff ${fileName}`).toString();
+  const gitDiff = type === 'server' ? execSync(`git diff ${fileName}`).toString() : 'NA';
 
   // Read the complete code of the file
-  const fileContent = fs.readFileSync(fileName, 'utf-8');
+  const fileContent = type === 'server' ? fs.readFileSync(fileName, 'utf-8') : 'NA';
 
   // Create instruction set
   const instructionSet = {
     projectGoal: `The primary project goal is to build a web application using ${technologyStack}.`,
+    errorType: type,
     fileName,
     gitDiff,
     fileContent,
@@ -36,13 +39,16 @@ export async function sendErrorToChatGPT(errorInfo: ErrorInformation): Promise<v
 
   try {
     const prompt = `
-    Analyze the provided information and return the following:
-    - Error message without the full stack trace but include the necessary sources of error
-    - Reason of error message
-    - Possible solutions
+    Analyze the provided information and respond a JSON object (and no other text before or after the JSON) with the following fields:
+    - errorMessageySummary: Error message without the full stack trace but include the necessary sources of error
+    - reason: Reason of error message
+    - possibleSolutions: Possible solutions
+    
+    -- If the type === 'client', fileName, gitDiff, and fileContent will be 'NA'.
+    -- If the type === 'client', format the values in Markdown format with errorMessageSummary as a heading and quoted, reason in a bold but regular text as a paragraph and and possibleSolution as a bull list. Make sure to wrap code in Markdown code wrappers wherever applicable.
 
-    Information::
-    ${JSON.stringify({ fileName: instructionSet['fileName'], error: instructionSet['errorMessage'] })}
+    -- Information (in JSON format)::
+    ${JSON.stringify(instructionSet)}    
   `;
 
     console.log(`OpenAI Prompt: ${prompt}`);
@@ -58,11 +64,32 @@ export async function sendErrorToChatGPT(errorInfo: ErrorInformation): Promise<v
       max_tokens: 150,
       n: 1,
       stop: null,
-      temperature: 0,
+      temperature: 0.3,
     });
 
-    const result = response.data.choices[0].text;
-    console.log(`OpenAI Response: ${result}`);
+    let result: ChatGPTResponse | string = 'Something went wrong.';
+    console.log('ChatGPT Response: ', response.data.choices);
+
+    if (response?.data?.choices) {
+      try {
+        // Remove next line characters from the response
+        const responseText = response.data.choices[0].text?.replace(/[\r\n]/g, '');
+        const jsonData = responseText?.match(/({.*})/g);
+
+        result = response.data.choices[0].text && jsonData && JSON.parse(jsonData[0]);
+      } catch (err) {
+        console.error("Failed to parse ChatGPT's response. Here is the full response: ", response.data.choices[0].text);
+      }
+    }
+
+    if (type === 'server') {
+      console.error((result as ChatGPTResponse).errorMessageSummary);
+      console.info((result as ChatGPTResponse).reason);
+      console.info((result as ChatGPTResponse).possibleSolution);
+      return;
+    } else {
+      return result as ChatGPTResponse;
+    }
   } catch (error: unknown) {
     console.error(error);
   }

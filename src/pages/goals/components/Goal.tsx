@@ -50,14 +50,14 @@ function Goal({
 
   const handleUpdateGoal = async () => {
     if (name.trim()) {
-      await updateGoal(id, { name });
+      updateGoal(id, { name });
       setEditing(false);
     }
   };
 
   const handleDeleteGoal = async () => {
     try {
-      await deleteGoal(id);
+      deleteGoal(id);
       setShowDeleteDialog(false);
       toast.success('Goal deleted successfully.');
     } catch (error) {
@@ -67,7 +67,7 @@ function Goal({
 
   const handleUpdateSubgoal = async (subgoalId: string, newName: string) => {
     try {
-      await updateSubgoal(id, subgoalId, { name: newName });
+      updateSubgoal(id, subgoalId, { name: newName });
       toast.success('Subgoal updated successfully.');
     } catch (error) {
       toast.error('Error updating subgoal. Please try again.');
@@ -77,7 +77,7 @@ function Goal({
   const handleDeleteSubgoal = async () => {
     if (subgoalToDelete) {
       try {
-        await deleteSubgoal(id, subgoalToDelete);
+        deleteSubgoal(id, subgoalToDelete);
         setShowDeleteSubgoalDialog(false);
         setSubgoalToDelete(null);
         toast.success('Subgoal deleted successfully.');

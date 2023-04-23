@@ -19,10 +19,10 @@ export default async function handler(
     res.status(200).json({ status: 200, data: dailySummary });
   } catch (error) {
     if (error instanceof Error) {
-      sendErrorToChatGPT({ fileName: __filename, error: error });
+      sendErrorToChatGPT('server', { fileName: __filename, error: error });
       res.status(500).json({ status: 500, error: error });
     } else {
-      sendErrorToChatGPT({ fileName: __filename, error: 'An unknown error occurred' });
+      sendErrorToChatGPT('server', { fileName: __filename, error: 'An unknown error occurred' });
       res.status(500).json({ status: 500, error: 'An unknown error occurred' });
     }
   }

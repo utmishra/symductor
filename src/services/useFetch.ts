@@ -4,8 +4,6 @@ const useFetch = (url: string) => {
   const [loading, setloading] = useState(true);
   const [error, seterror] = useState('');
 
-  console.info(`Calling ${url}`);
-
   useEffect(() => {
     fetch(url)
       .then((res) => res.json())
