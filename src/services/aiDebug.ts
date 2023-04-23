@@ -10,6 +10,8 @@ export interface ErrorInformation {
 }
 
 export async function sendErrorToChatGPT(errorInfo: ErrorInformation): Promise<void> {
+  console.error(errorInfo.error);
+
   const { fileName, error } = errorInfo;
 
   // Get the git diff of the file

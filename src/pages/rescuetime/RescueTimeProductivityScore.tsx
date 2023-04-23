@@ -36,7 +36,7 @@ const renderProgressBar = (status: string, productivityScore: number | null, err
 const thisWeekOrLastWeekScore = (data: RescueTimeDailySummaryFeed[]): number => {
   const itsEarlyWeek = new Date().getDay() < 4;
   if (itsEarlyWeek) {
-    return data.slice(1, 8).reduce((acc, curr) => acc + curr.productivity_pulse, 0) / (data.length - 1);
+    return Math.floor(data.slice(1, 8).reduce((acc, curr) => acc + curr.productivity_pulse, 0) / (data.length - 1));
   } else {
     return Math.floor(
       data
@@ -53,7 +53,7 @@ const thisMonthScore = (data: RescueTimeDailySummaryFeed[]): number => {
 };
 
 export const RescueTimeProductivityScore = () => {
-  const { data, isLoading, isError }: { data: null | RescueTimeDailySummaryFeed[]; isLoading: boolean; isError: string } = useRescueTimeData();
+  const { data, isLoading, isError }: { data: null | RescueTimeDailySummaryFeed[]; isLoading: boolean; isError: string } = useRescueTimeData('score');
 
   const cardType = useMemo(() => {
     if (isError) {

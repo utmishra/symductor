@@ -35,18 +35,22 @@ export class RescueTimeService {
   }
 
   async currentActivity(): Promise<RescueTimeActivity | false> {
-    const dailySummary = await axios.get(`${RESCUETIME_API_PATH}/data`, {
+    const today = DateTime.local();
+    const beginTime = today.startOf('day').toFormat('yyy-LL-dd');
+    const endTime = today.minus({ days: 3 }).toFormat('yyyy-LL-dd');
+    console.info(`Requests RescueTime current activities with param: ${beginTime} - ${endTime}`);
+    const activities = await axios.get(`${RESCUETIME_API_PATH}/data`, {
       params: {
         key: this.apiKey,
         format: 'json',
-        perspective: 'interval',
-        resolution_time: 'minute',
-        restrict_begin: DateTime.local().toFormat('yyyy-MM-dd'),
-        restrict_end: DateTime.local().minus({ days: 1 }).toFormat('yyyy-MM-dd'),
+        perspective: 'rank',
+        restrict_begin: beginTime,
+        restrict_end: endTime,
       },
     });
-    if (dailySummary.status >= 200 && dailySummary.status < 300) {
-      return dailySummary.data;
+    console.log(activities);
+    if (activities.status >= 200 && activities.status < 300) {
+      return activities.data;
     } else {
       return false;
     }

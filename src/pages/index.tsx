@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { Container, Row, Text, Col, Card, Table, Grid } from '@nextui-org/react';
+import { Container, Row, Text, Col, Card, Grid } from '@nextui-org/react';
 import { RescueTimeProductivityScore } from './rescuetime/RescueTimeProductivityScore';
 import { RescueTimeActivities } from './rescuetime/RescueTimeActivities';
 
@@ -50,8 +50,8 @@ export default function Home() {
       </Row>
       <Row>
         <Col span={12}>
-          <Grid.Container gap={2} justify='center'>
-            <Grid xs={12} sm={6} md={4} lg={3}>
+          <Grid.Container gap={1} justify='center'>
+            <Grid xs={12} sm={12} md={6} lg={6}>
               <RescueTimeActivities />
             </Grid>
           </Grid.Container>
