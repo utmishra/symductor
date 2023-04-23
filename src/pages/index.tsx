@@ -2,6 +2,8 @@ import Image from 'next/image';
 import { Container, Row, Text, Col, Card, Grid } from '@nextui-org/react';
 import { RescueTimeProductivityScore } from './rescuetime/RescueTimeProductivityScore';
 import { RescueTimeActivities } from './rescuetime/RescueTimeActivities';
+import { GoalList } from './goals/components/GoalList';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function Home() {
   return (
@@ -10,6 +12,11 @@ export default function Home() {
         background: '#cde2fe !important',
       }}
     >
+      <Row justify='center' align='center'>
+        <Col span={12}>
+          <GoalList />
+        </Col>
+      </Row>
       <Row justify='center' align='center'>
         <Col span={3}>
           <Image

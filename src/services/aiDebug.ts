@@ -26,8 +26,8 @@ export async function sendErrorToChatGPT(errorInfo: ErrorInformation): Promise<v
     fileName,
     gitDiff,
     fileContent,
-    errorMessage: error.message,
-    errorStack: error.stack,
+    errorMessage: error,
+    errorStack: error,
   };
 
   // Send instruction set to ChatGPT API
@@ -36,14 +36,14 @@ export async function sendErrorToChatGPT(errorInfo: ErrorInformation): Promise<v
 
   try {
     const prompt = `
-        Analyze the provided information and return the following:
-        - Error message without the full stack trace but include the necessary sources of error
-        - Reason of error message
-        - Possible solutions
+    Analyze the provided information and return the following:
+    - Error message without the full stack trace but include the necessary sources of error
+    - Reason of error message
+    - Possible solutions
 
-        Information::
-        ${JSON.stringify({ fileName: instructionSet['sourceURL'], error: instructionSet['error'] })}
-      `;
+    Information::
+    ${JSON.stringify({ fileName: instructionSet['fileName'], error: instructionSet['errorMessage'] })}
+  `;
 
     console.log(`OpenAI Prompt: ${prompt}`);
 
@@ -64,12 +64,6 @@ export async function sendErrorToChatGPT(errorInfo: ErrorInformation): Promise<v
     const result = response.data.choices[0].text;
     console.log(`OpenAI Response: ${result}`);
   } catch (error: unknown) {
-    if (error.response) {
-      console.log(error.response.status);
-      console.log(error.response.data);
-    } else {
-      console.log(error.message);
-      console.log('Something went wrong');
-    }
+    console.error(error);
   }
 }

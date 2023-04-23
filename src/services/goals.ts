@@ -1,5 +1,5 @@
 import { db } from '../firebaseConfig';
-import { collection, doc, getDoc, addDoc, setDoc, getDocs } from 'firebase/firestore';
+import { collection, doc, getDoc, addDoc, setDoc, getDocs, deleteDoc } from 'firebase/firestore';
 import { Goal, Subgoal } from '../types/goals';
 
 const goalsCollection = collection(db, 'goals');
@@ -38,6 +38,21 @@ export async function addSubgoal(goalId: string, data: Partial<Subgoal>): Promis
   const goalData = goalSnapshot.data() as Goal;
 
   const updatedSubgoals = [...goalData.subgoals, data];
+
+  await setDoc(goalDoc, { ...goalData, subgoals: updatedSubgoals });
+}
+
+export async function deleteGoal(goalId: string): Promise<void> {
+  const goalDoc = doc(goalsCollection, goalId);
+  await deleteDoc(goalDoc);
+}
+
+export async function deleteSubgoal(goalId: string, subgoalId: string): Promise<void> {
+  const goalDoc = doc(goalsCollection, goalId);
+  const goalSnapshot = await getDoc(goalDoc);
+  const goalData = goalSnapshot.data() as Goal;
+
+  const updatedSubgoals = goalData.subgoals.filter((subgoal) => subgoal.id !== subgoalId);
 
   await setDoc(goalDoc, { ...goalData, subgoals: updatedSubgoals });
 }

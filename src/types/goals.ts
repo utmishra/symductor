@@ -18,4 +18,6 @@ export type GoalComponentProps = Goal & {
   updateSubgoal: (goalId: string, subgoalId: string, data: Partial<Subgoal>) => void;
   addSubgoal: (goalId: string, data: Omit<Subgoal, 'id'>) => void;
   addGoal: (data: Omit<Goal, 'id'>) => void;
+  deleteGoal: (goalId: string) => void;
+  deleteSubgoal: (goalId: string, subgoalId: string) => void;
 };

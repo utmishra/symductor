@@ -1,11 +1,28 @@
 import React, { useState } from 'react';
-import { Goal, GoalComponentProps } from '@/types/goals';
+import { GoalComponentProps } from '@/types/goals';
+import ConfirmationModal from '@/pages/common/ConfirmationModal';
+import { toast } from 'react-toastify';
+import { Button, Input } from '@nextui-org/react';
 
-function Goal({ id, name, description, subgoals, updateGoal, updateSubgoal, addSubgoal, addGoal }: GoalComponentProps): JSX.Element {
+function Goal({
+  id,
+  name,
+  description,
+  subgoals,
+  updateGoal,
+  updateSubgoal,
+  addSubgoal,
+  addGoal,
+  deleteGoal,
+  deleteSubgoal,
+}: GoalComponentProps): JSX.Element {
   const [addingSubgoal, setAddingSubgoal] = useState(false);
   const [newSubgoalText, setNewSubgoalText] = useState('');
   const [newGoalText, setNewGoalText] = useState('');
   const [editing, setEditing] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showDeleteSubgoalDialog, setShowDeleteSubgoalDialog] = useState(false);
+  const [subgoalToDelete, setSubgoalToDelete] = useState<string | null>(null);
 
   const handleAddSubgoal = async () => {
     if (newSubgoalText.trim()) {
@@ -38,6 +55,38 @@ function Goal({ id, name, description, subgoals, updateGoal, updateSubgoal, addS
     }
   };
 
+  const handleDeleteGoal = async () => {
+    try {
+      await deleteGoal(id);
+      setShowDeleteDialog(false);
+      toast.success('Goal deleted successfully.');
+    } catch (error) {
+      toast.error('Error deleting goal. Please try again.');
+    }
+  };
+
+  const handleUpdateSubgoal = async (subgoalId: string, newName: string) => {
+    try {
+      await updateSubgoal(id, subgoalId, { name: newName });
+      toast.success('Subgoal updated successfully.');
+    } catch (error) {
+      toast.error('Error updating subgoal. Please try again.');
+    }
+  };
+
+  const handleDeleteSubgoal = async () => {
+    if (subgoalToDelete) {
+      try {
+        await deleteSubgoal(id, subgoalToDelete);
+        setShowDeleteSubgoalDialog(false);
+        setSubgoalToDelete(null);
+        toast.success('Subgoal deleted successfully.');
+      } catch (error) {
+        toast.error('Error deleting subgoal. Please try again.');
+      }
+    }
+  };
+
   return (
     <div>
       {editing ? (
@@ -53,8 +102,22 @@ function Goal({ id, name, description, subgoals, updateGoal, updateSubgoal, addS
         </>
       )}
       <ul>
+        {/* Subgoals */}
         {subgoals.map((subgoal) => (
-          <li key={subgoal.id}>{subgoal.name}</li>
+          <div key={subgoal.id}>
+            {/* ... subgoal elements */}
+            <Input value={subgoal.name} onChange={(e) => handleUpdateSubgoal(subgoal.id, e.target.value)} placeholder='Subgoal name' />
+            <Button
+              size='md'
+              type='reset'
+              onClick={() => {
+                setShowDeleteSubgoalDialog(true);
+                setSubgoalToDelete(subgoal.id);
+              }}
+            >
+              Delete Subgoal
+            </Button>
+          </div>
         ))}
       </ul>
       {addingSubgoal ? (
@@ -70,6 +133,32 @@ function Goal({ id, name, description, subgoals, updateGoal, updateSubgoal, addS
         <input type='text' value={newGoalText} onChange={(e) => setNewGoalText(e.target.value)} />
         <button onClick={handleAddGoal}>Add Goal</button>
       </div>
+      <Button size='md' type='reset' onClick={() => setShowDeleteDialog(true)}>
+        Delete Goal
+      </Button>
+
+      <ConfirmationModal
+        open={showDeleteDialog}
+        title='Delete Goal'
+        message='Are you sure you want to delete this goal?'
+        onConfirm={handleDeleteGoal}
+        onClose={() => setShowDeleteDialog(false)}
+        confirmButtonText='Yes, Delete'
+        cancelButtonText='No, Keep'
+        confirmButtonColor='error'
+        cancelButtonColor='default'
+      />
+      <ConfirmationModal
+        open={showDeleteSubgoalDialog}
+        title='Delete Subgoal'
+        message='Are you sure you want to delete this subgoal?'
+        onConfirm={handleDeleteSubgoal}
+        onClose={() => setShowDeleteSubgoalDialog(false)}
+        confirmButtonText='Yes, Delete'
+        cancelButtonText='No, Keep'
+        confirmButtonColor='error'
+        cancelButtonColor='default'
+      />
     </div>
   );
 }
