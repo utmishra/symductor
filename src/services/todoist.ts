@@ -23,6 +23,7 @@ export const todoistService = async () => {
       overdue: tasksOverdue,
     };
   } catch (error) {
+    console.error(error);
     throw new Error('Error fetching tasks from Todoist');
   }
 };

@@ -1,7 +1,7 @@
 import { Button, Loading, Tooltip } from '@nextui-org/react';
 import { MoveEvent } from '../../rescuetime/types';
 
-export const StatusBasedButton = (props: { state: 'na' | 'in_progress' | 'successful' | 'failed'; moveEvents: MoveEvent }) => {
+const StatusBasedButton = (props: { state: 'na' | 'in_progress' | 'successful' | 'failed'; moveEvents: MoveEvent }) => {
   return (
     <>
       <Button
@@ -20,3 +20,5 @@ export const StatusBasedButton = (props: { state: 'na' | 'in_progress' | 'succes
     </>
   );
 };
+
+export { StatusBasedButton };

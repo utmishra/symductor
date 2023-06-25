@@ -1,5 +1,7 @@
 import { initializeApp, getApp, getApps } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
+import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
+
+const isLocal = process.env.NODE_ENV === 'development';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -11,6 +13,11 @@ const firebaseConfig = {
 };
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+
 const db = getFirestore(app);
+
+if (isLocal) {
+  connectFirestoreEmulator(db, 'localhost', 8090);
+}
 
 export { db };

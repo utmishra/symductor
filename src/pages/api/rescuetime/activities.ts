@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { RescueTimeService } from '../../../services/rescueTime';
 import { RescueTimeActivity } from '../../../types/rescuetime';
-import { sendErrorToChatGPT } from '../../../services/aiDebug';
 
 export default async function handler(
   req: NextApiRequest,
@@ -19,10 +18,10 @@ export default async function handler(
     res.status(200).json({ status: 200, data: dailySummary });
   } catch (error) {
     if (error instanceof Error) {
-      sendErrorToChatGPT('server', { fileName: __filename, error: error });
+      console.error(error);
       res.status(500).json({ status: 500, error: error });
     } else {
-      sendErrorToChatGPT('server', { fileName: __filename, error: 'An unknown error occurred' });
+      console.error(error);
       res.status(500).json({ status: 500, error: 'An unknown error occurred' });
     }
   }

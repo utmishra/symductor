@@ -6,7 +6,7 @@ const API_URL = {
   calendars: '/api/google-calendar/all-calendars',
 };
 
-export const useGoogleCalendarApi = (type: RequestType): GoogleCalendarEventsHookResponse | GoogleCalendarsHookResponse => {
+const useGoogleCalendarApi = (type: RequestType): GoogleCalendarEventsHookResponse | GoogleCalendarsHookResponse => {
   const { data, error } = useFetch(API_URL[type]);
   return {
     data,
@@ -14,3 +14,5 @@ export const useGoogleCalendarApi = (type: RequestType): GoogleCalendarEventsHoo
     isError: error,
   };
 };
+
+export { useGoogleCalendarApi };

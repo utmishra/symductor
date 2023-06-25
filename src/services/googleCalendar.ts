@@ -2,27 +2,12 @@ import { google, calendar_v3 } from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
 import * as fs from 'fs';
 import * as util from 'util';
-import { GoogleCalendarEvent } from '@/pages/rescuetime/types';
+import { DateTime } from 'luxon';
 
 const readFile = util.promisify(fs.readFile);
-const werstoffEvents = [
-  'Kehricht',
-  'Grüngut',
-  'Karton',
-  'Papier',
-  'Kompostabgabe',
-  'Häckselaktion Frühjahr',
-  'Häckselaktion Herbst',
-  'Sonderabfallmobil',
-  'Hauptsammelstelle geschlossen',
-  'Tour Öki-Bus fällt aus',
-  'Hauptsammelstelle Nachmittag geschlossen',
-  'Tour Öki-Bus Nachmittag fällt aus',
-  'Reminder of the last day of validity',
-];
 
 export class GoogleCalendar {
-  private static SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
+  private static SCOPES = ['https://www.googleapis.com/auth/calendar'];
   private calendarClient: calendar_v3.Calendar;
 
   private constructor(calendarClient: calendar_v3.Calendar) {
@@ -61,78 +46,115 @@ export class GoogleCalendar {
     });
   }
 
-  public async getEventsForNextSevenDays(calendarId: string | 'primary'): Promise<calendar_v3.Schema$Event[]> {
+  public async moveAbfallEventsToWerstoffCalendar(
+    startDate: string,
+    endDate: string,
+    sourceCalendarId: string | 'primary',
+    targetCalendarId: string,
+  ): Promise<{ status: 200 | 500 | 400 | 401; message: string }> {
     if (!this.calendarClient) {
       throw new Error('Google Calendar client not initialized');
     }
 
-    const now = new Date();
-    const weekFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const abfalleventKeyWords = [
+      'Kehricht',
+      'Grüngut',
+      'Karton',
+      'Papier',
+      'Kompostabgabe',
+      'Häckselaktion',
+      'Frühjahr',
+      'Herbst',
+      'Sonderabfallmobil',
+      'Hauptsammelstelle',
+      'geschlossen',
+      'Tour',
+      'Öki-Bus',
+      'fällt',
+      'aus',
+      'Nachmittag',
+    ];
+    const startTime = DateTime.fromFormat(startDate, 'yyyy-MM-dd');
+    const endTime = DateTime.fromFormat(endDate, 'yyyy-MM-dd');
 
     const response = await this.calendarClient.events.list({
-      calendarId: calendarId,
-      timeMin: now.toISOString(),
-      timeMax: weekFromNow.toISOString(),
+      calendarId: sourceCalendarId,
+      timeMin: startTime.toISO() as string,
+      timeMax: endTime.toISO() as string,
       singleEvents: true,
       orderBy: 'startTime',
     });
 
-    const events = response.data.items;
-    if (!events) {
-      console.log('No upcoming events found.');
-      return [];
+    const calendarEvents = response.data.items;
+    if (calendarEvents && calendarEvents !== undefined && calendarEvents.length > 0) {
+      const abfallEvents = calendarEvents.filter((event): event is calendar_v3.Schema$Event => {
+        return (
+          typeof event.summary === 'string' &&
+          abfalleventKeyWords.some((keyword) => (event && event.summary != null ? event.summary.includes(keyword) : false))
+        );
+      });
+
+      await this.moveEventsToCalendar(abfallEvents, sourceCalendarId, targetCalendarId);
+      return {
+        status: 200,
+        message: `Moved ${abfallEvents.length} events from ${sourceCalendarId} to ${targetCalendarId}`,
+      };
+    } else {
+      return {
+        status: 500,
+        message: 'Something went wrong while fetching events from Google Calendar',
+      };
     }
-    return events;
   }
 
-  // Filter all event IDs from events in the next 30 days, where the event Summary is in German language
-  public async getEventIdsForNextThirtyDays(calendarId: string | 'primary'): Promise<GoogleCalendarEvent[]> {
+  public async moveEventsToCalendar(events: calendar_v3.Schema$Event[], sourceCalendarId: string, targetCalendarId: string) {
     if (!this.calendarClient) {
       throw new Error('Google Calendar client not initialized');
     }
 
-    const now = new Date();
-    const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
-
-    const response = await this.calendarClient.events.list({
-      calendarId: calendarId,
-      timeMin: now.toISOString(),
-      timeMax: thirtyDaysFromNow.toISOString(),
-      singleEvents: true,
-      orderBy: 'startTime',
-    });
-
-    const events = response.data.items;
-    if (!events) {
-      console.log('No upcoming events found.');
-      return [];
+    const batchSize = 50;
+    const batches = [];
+    for (let i = 0; i < events.length; i += batchSize) {
+      batches.push(events.slice(i, i + batchSize));
     }
 
-    const abfallEvents: GoogleCalendarEvent[] = events
-      .filter((event) => event.summary && werstoffEvents.includes(event.summary))
-      .map((event): GoogleCalendarEvent => {
-        if (!event.id || !event.summary) {
-          throw new Error('Event ID or Summary is missing');
+    const moveResponse = [];
+    for (const batch of batches) {
+      for (const event of batch) {
+        console.info('------------------------------------------------');
+        console.info(`Moving event ${event.id}: ${event.summary} to ${targetCalendarId}`);
+        if (event.id != null) {
+          try {
+            const currentMoveResponse = await this.calendarClient.events.move({
+              calendarId: sourceCalendarId,
+              eventId: event.id,
+              destination: targetCalendarId,
+            });
+          } catch (error) {
+            console.error(error);
+            console.error('!!!SKIPPED!!!');
+          }
+          console.info('MOVED!!!!');
+        } else {
+          console.info('SKIPPED!!!!');
         }
-        return { id: event.id, summary: event.summary };
-      });
-
-    return abfallEvents;
+        console.info('------------------------------------------------');
+      }
+    }
   }
 
-  public async moveEventsToCalendar(eventIds: string[], targetCalendarId: string) {
-    if (!this.calendarClient) {
-      throw new Error('Google Calendar client not initialized');
-    }
+  public async getEventsForNextSevenDays(calendarId: string) {
+    const startTime = DateTime.now();
+    const endTime = startTime.plus({ days: 7 });
 
-    const promises = eventIds.map((eventId) => {
-      return this.calendarClient.events.move({
-        calendarId: 'primary',
-        eventId: eventId,
-        destination: targetCalendarId,
-      });
+    const response = await this.calendarClient.events.list({
+      calendarId: calendarId,
+      timeMin: startTime.toISO() as string,
+      timeMax: endTime.toISO() as string,
+      singleEvents: true,
+      orderBy: 'startTime',
     });
 
-    return Promise.all(promises);
+    return response.data.items;
   }
 }

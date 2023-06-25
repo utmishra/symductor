@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { GoalComponentProps } from '@/types/goals';
 import ConfirmationModal from '@/pages/common/ConfirmationModal';
 import { toast } from 'react-toastify';
-import { Button, Input } from '@nextui-org/react';
+import { Button, Input, Tooltip } from '@nextui-org/react';
 
 function Goal({
   id,
@@ -102,23 +102,26 @@ function Goal({
         </>
       )}
       <ul>
-        {/* Subgoals */}
-        {subgoals.map((subgoal) => (
-          <div key={subgoal.id}>
-            {/* ... subgoal elements */}
-            <Input value={subgoal.name} onChange={(e) => handleUpdateSubgoal(subgoal.id, e.target.value)} placeholder='Subgoal name' />
-            <Button
-              size='md'
-              type='reset'
-              onClick={() => {
-                setShowDeleteSubgoalDialog(true);
-                setSubgoalToDelete(subgoal.id);
-              }}
-            >
-              Delete Subgoal
-            </Button>
-          </div>
-        ))}
+        {subgoals && typeof subgoals.map == 'function' ? (
+          subgoals.map((subgoal) => (
+            <div key={subgoal.id}>
+              {/* ... subgoal elements */}
+              <Input value={subgoal.name} onChange={(e) => handleUpdateSubgoal(subgoal.id, e.target.value)} placeholder='Subgoal name' />
+              <Button
+                size='md'
+                type='reset'
+                onClick={() => {
+                  setShowDeleteSubgoalDialog(true);
+                  setSubgoalToDelete(subgoal.id);
+                }}
+              >
+                Delete Subgoal
+              </Button>
+            </div>
+          ))
+        ) : (
+          <Tooltip color='error' content='Error loading subgoals' />
+        )}
       </ul>
       {addingSubgoal ? (
         <>

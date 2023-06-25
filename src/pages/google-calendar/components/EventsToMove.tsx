@@ -1,7 +1,7 @@
 import { Container, Row, Col, Text, Table, Checkbox } from '@nextui-org/react';
 import { GoogleCalendarEvent, HandleEventSelect } from '../../rescuetime/types';
 
-export const EventsToMove = (props: { calendarEvents: GoogleCalendarEvent[]; handleSelect: HandleEventSelect }) => {
+const EventsToMove = (props: { calendarEvents: GoogleCalendarEvent[]; handleSelect: HandleEventSelect }) => {
   return (
     <>
       <Container
@@ -53,3 +53,5 @@ export const EventsToMove = (props: { calendarEvents: GoogleCalendarEvent[]; han
     </>
   );
 };
+
+export { EventsToMove };

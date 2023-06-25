@@ -19,3 +19,10 @@ export type TodoistTasks = {
   nextWeek: TodoistTask[];
   overdue: TodoistTask[];
 };
+
+export type TodoistTaskRows = {
+  today: JSX.Element | JSX.Element[];
+  thisWeek: JSX.Element | JSX.Element[];
+  nextWeek: JSX.Element | JSX.Element[];
+  overdue: JSX.Element | JSX.Element[];
+};

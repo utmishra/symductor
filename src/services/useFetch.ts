@@ -1,18 +1,21 @@
 import { useEffect, useState } from 'react';
 const useFetch = (url: string) => {
   const [data, setdata] = useState(null);
-  const [loading, setloading] = useState(true);
   const [error, seterror] = useState('');
+  const [loading, setloading] = useState(true);
 
   useEffect(() => {
     fetch(url)
-      .then((res) => res.json())
-      .then((data) => {
-        seterror(data.error);
-        setdata(data.data);
+      .then((response) => response.json())
+      .then((responsePayload) => {
+        setdata(responsePayload.data);
+        seterror(responsePayload.error);
+        setloading(false);
+      })
+      .catch((error) => {
+        seterror(error);
         setloading(false);
       });
   }, [url]);
-  return { data, loading, error };
 };
 export default useFetch;

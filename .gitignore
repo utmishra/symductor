@@ -105,3 +105,9 @@ dist
 
 # Intellij Idea IDE config
 .idea
+.keys
+.keys/**/**
+
+# Firebase credentials and local emulator files
+.firebase
+.firebase/**/**

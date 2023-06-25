@@ -7,7 +7,7 @@ import { StatusBasedButton } from '../components/StatusBasedButton';
 
 const moveEventsToCalendarApi = '/api/google-calendar/move-events';
 
-export const MoveEventsToCalendar = () => {
+const MoveEventsToCalendar = () => {
   const { data: calendars, isLoading: areCalendarsLoading, isError: isCalendarsError } = useGoogleCalendarApi('calendars');
   const { data: calendarEvents, isLoading: areEventsLoading, isError: isEventsError } = useGoogleCalendarApi('events');
   const [selectedCalendar, setSelectedCalendar] = useState<string>('primary');
@@ -112,3 +112,5 @@ export const MoveEventsToCalendar = () => {
     </>
   );
 };
+
+export { MoveEventsToCalendar };
