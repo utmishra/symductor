@@ -53,4 +53,29 @@ export class RescueTimeService {
       return false;
     }
   }
+
+  async analytics(
+    startDate: DateTime,
+    endDate: DateTime,
+    unitBreakDown: 'month' | 'week' | 'day' | 'hour' | 'minute' = 'minute',
+    perspective: 'rank' | 'interval' = 'interval',
+  ): Promise<RescueTimeActivity> {
+    console.log('Fetching RescueTime data...');
+    const analytics = await axios.get(`${RESCUETIME_API_PATH}/data`, {
+      params: {
+        key: this.apiKey,
+        format: 'json',
+        perspective,
+        restrict_begin: startDate.toFormat('yyyy-LL-dd'),
+        restrict_end: endDate.toFormat('yyyy-LL-dd'),
+        interval: unitBreakDown,
+      },
+    });
+
+    if (analytics.status >= 200 && analytics.status < 300) {
+      return analytics.data as Promise<RescueTimeActivity>;
+    } else {
+      throw new Error(`Something went wrong while fetching RescueTime data. HTTP status code: ${analytics.status}`);
+    }
+  }
 }
