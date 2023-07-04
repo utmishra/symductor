@@ -3,7 +3,7 @@ import { useRescueTimeData } from './hook';
 import { RescueTimeActivity, RescueTimeActivityResponse } from '@/types/rescuetime';
 import { Duration } from 'luxon';
 
-export const RescueTimeActivitiesClient = () => {
+const RescueTimeActivitiesClient = () => {
   const { data: activities, isLoading, isError }: RescueTimeActivityResponse = useRescueTimeData('activities');
 
   const tableRows = () => {
@@ -68,3 +68,5 @@ export const RescueTimeActivitiesClient = () => {
     </Table>
   );
 };
+
+export default RescueTimeActivitiesClient;

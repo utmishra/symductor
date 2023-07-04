@@ -52,7 +52,7 @@ const thisMonthScore = (data: RescueTimeDailySummaryFeed[]): number => {
   return Math.floor(data.reduce((acc, curr) => acc + curr.productivity_pulse, 0) / data.length);
 };
 
-export const RescueTimeProductivityScoreClient = () => {
+const RescueTimeProductivityScoreClient = () => {
   const { data, isLoading, isError }: { data: null | RescueTimeDailySummaryFeed[]; isLoading: boolean; isError: string } = useRescueTimeData('score');
 
   const cardType = useMemo(() => {
@@ -121,3 +121,5 @@ export const RescueTimeProductivityScoreClient = () => {
     </>
   );
 };
+
+export default RescueTimeProductivityScoreClient;

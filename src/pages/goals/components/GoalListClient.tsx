@@ -36,3 +36,5 @@ const GoalListClient: React.FC = () => {
     </div>
   );
 };
+
+export default GoalListClient;
